@@ -1,5 +1,5 @@
 -module(svg).
--export([line/5, line/4, box/5, box/4, createSVG/1]).
+-export([line/5, line/4, box/5, box/4, createSVG/1, link2/4, link2/5]).
 
 % line(X1,Y1,X2,Y2,Option) -> Draw a line between (X1,Y1) and (X2,Y2).
 % X1,Y1 : Integer, position of the starting point.
@@ -36,7 +36,18 @@ box(X,Y,W,H,{}) ->
 box(X,Y,W,H, Option) ->
 	{rect, [{x, X}, {y, Y}, {width, W}, {height, H}]++Option, []}.
 
-%
+% link2(X,Y, A,B) -> Create a squared link between (X,Y) and (A,B).
+link2(X,Y, A,B)  ->
+	[line(X,Y, A,Y),
+	line(A,Y, A,B)].
+link2(X,Y, A,B, Option) ->
+	[line(X,Y, A,Y, Option),
+	line(A,Y, A,B, Option)].
+
+% createSVG(Object) -> Create a valid SVG file with the specified object in argument.
+% Object -> a Array of tuple. Simply said, the best way to do something
+% with this is to do something like :
+% 	svg:createSVG( [ svg:line(args), svg:box(args, ... ] ).
 createSVG(Objects) ->
 	Data = {svg, [{xmlns, "http://www.w3.org/2000/svg"}, {version, "1.1"}], Objects},
 	xmerl:export_simple([Data], xmerl_xml).
